@@ -18,7 +18,7 @@ You will complete the following tasks and do any extra wiring and package instal
 
 Write the following user access functions inside `api/users/users-model.js`:
 
-- [ ] `find`
+- [X] `find`
 - [X] `findBy`
 - [X] `findById`
 
@@ -26,8 +26,8 @@ Write the following user access functions inside `api/users/users-model.js`:
 
 Write the following auth middleware inside `api/auth/auth-middleware.js`:
 
-- [ ] `restricted`
-- [ ] `only`
+- [X] `restricted`
+- [X] `only`
 - [X] `checkUsernameExists`
 - [X] `validateRoleName`
 
@@ -42,8 +42,8 @@ Write the following endpoints inside `api/auth/auth-router.js`:
 
 The endpoints inside `api/users/users-router.js` are built already but check them out:
 
-- [ ] `[GET] /api/users` - only users with a valid token can access
-- [ ] `[GET] /api/users/:user_id` - only users with a valid token AND a role of 'admin' can access
+- [X] `[GET] /api/users` - only users with a valid token can access
+- [X] `[GET] /api/users/:user_id` - only users with a valid token AND a role of 'admin' can access
 
 #### 2D - Secrets File
 
