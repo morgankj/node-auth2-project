@@ -1,7 +1,6 @@
 const dbConfig = require("../../data/db-config");
 const { JWT_SECRET } = require("../secrets"); // use this secret!
 const jwt = require("jsonwebtoken");
-const e = require("express");
 
 const restricted = (req, res, next) => {
   const token = req.headers.authorization;
@@ -30,7 +29,7 @@ const restricted = (req, res, next) => {
       "message": "Token invalid"
     }
 
-    Put the decoded token in the req object, to make life easier for middlewares downstream!
+    Put the decoded token in the req object, to make life easier for middleware downstream!
   */
 };
 
@@ -76,7 +75,8 @@ const checkUsernameExists = async (req, res, next) => {
 const validateRoleName = (req, res, next) => {
   try {
     if (req.body.role_name) {
-      const role_name = req.body.role_name.toLowerCase().trim();
+      req.body.role_name = req.body.role_name.toLowerCase().trim();
+      const role_name = req.body.role_name;
 
       if (role_name === "admin") {
         next({ status: 422, message: "Role name can not be admin" });
