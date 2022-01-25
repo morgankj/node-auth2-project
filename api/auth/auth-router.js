@@ -1,8 +1,14 @@
 const router = require("express").Router();
-const { checkUsernameExists, validateRoleName } = require('./auth-middleware');
-const { JWT_SECRET } = require("../secrets"); // use this secret!
+const { checkUsernameExists, validateRoleName } = require("./auth-middleware");
+const { JWT_SECRET, BCRYPT_ROUNDS } = require("../secrets"); // use this secret!
+const bcrypt = require("bcryptjs");
 
-router.post("/register", validateRoleName, (req, res, next) => {
+router.post("/register",  (req, res, next) => {
+  let user = req.body;
+
+  const hash = bcrypt.hashSync(user.password, BCRYPT_ROUNDS);
+  user.password = hash;
+  console.log('AUTH POST REGISTER: ', user);
   /**
     [POST] /api/auth/register { "username": "anna", "password": "1234", "role_name": "angel" }
 
@@ -16,8 +22,9 @@ router.post("/register", validateRoleName, (req, res, next) => {
    */
 });
 
-
 router.post("/login", checkUsernameExists, (req, res, next) => {
+  let { username, password } = req.body;
+  console.log('AUTH POST LOGIN: ', username, password);
   /**
     [POST] /api/auth/login { "username": "sue", "password": "1234" }
 
