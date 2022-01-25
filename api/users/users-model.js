@@ -21,17 +21,10 @@ function find() {
 }
 
 function findBy(filter) {
-  // select
-  //     u.user_id, u.username, u.password, r.role_name
-  // from users as u
-  // join roles as r
-  //     on u.role_id = r.role_id
-  // where u.username = morgan;
-  console.log("FILTER: ", filter);
   return db("users as u")
     .join("roles as r", "u.role_id", "=", "r.role_id")
     .select("u.user_id", "u.username", "u.password", "r.role_name")
-    .where(filter)
+    .where(filter);
   /**
     You will need to join two tables.
     Resolves to an ARRAY with all users that match the filter condition.
@@ -48,6 +41,11 @@ function findBy(filter) {
 }
 
 function findById(user_id) {
+  return db("users as u")
+    .join("roles as r", "u.role_id", "=", "r.role_id")
+    .select("u.user_id", "u.username", "r.role_name")
+    .where("u.user_id", user_id)
+    .first();
   /**
     You will need to join two tables.
     Resolves to the user with the given user_id.
@@ -104,3 +102,21 @@ module.exports = {
   findBy,
   findById,
 };
+
+// SQL for the findBy() function
+// -----------------------------
+// select
+//     u.user_id, u.username, u.password, r.role_name
+// from users as u
+// join roles as r
+//     on u.role_id = r.role_id
+// where u.username = morgan;
+
+// SQL for the finById() function
+// ------------------------------
+// select
+//     u.user_id, u.username, r.role_name
+// from users as u
+// join roles as r
+//     on u.role_id = r.role_id
+// where u.user_id = 1;

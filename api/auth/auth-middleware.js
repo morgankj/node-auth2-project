@@ -1,3 +1,4 @@
+const dbConfig = require("../../data/db-config");
 const { JWT_SECRET } = require("../secrets"); // use this secret!
 
 const restricted = (req, res, next) => {
@@ -16,9 +17,9 @@ const restricted = (req, res, next) => {
 
     Put the decoded token in the req object, to make life easier for middlewares downstream!
   */
-}
+};
 
-const only = role_name => (req, res, next) => {
+const only = (role_name) => (req, res, next) => {
   /*
     If the user does not provide a token in the Authorization header with a role_name
     inside its payload matching the role_name passed to this function as its argument:
@@ -29,10 +30,21 @@ const only = role_name => (req, res, next) => {
 
     Pull the decoded token from the req object, to avoid verifying it again!
   */
-}
+};
 
-
-const checkUsernameExists = (req, res, next) => {
+const checkUsernameExists = async (req, res, next) => {
+  try {
+    const usernameExists = await dbConfig("users")
+      .where("username", req.body.username)
+      .first();
+    if (usernameExists) {
+      next();
+    } else {
+      next({ status: 401, message: "Invalid credentials" });
+    }
+  } catch (err) {
+    next(err);
+  }
   /*
     If the username in req.body does NOT exist in the database
     status 401
@@ -40,10 +52,36 @@ const checkUsernameExists = (req, res, next) => {
       "message": "Invalid credentials"
     }
   */
-}
-
+};
 
 const validateRoleName = (req, res, next) => {
+  try {
+    if (req.body.role_name) {
+      const role_name = req.body.role_name.toLowerCase().trim();
+
+      if (role_name === "admin") {
+        next({ status: 422, message: "Role name can not be admin" });
+      } else if (role_name.length > 32) {
+        next({
+          status: 422,
+          message: "Role name can not be longer than 32 chars",
+        });
+      } else if (role_name.length === 0) {
+        req.body.role_name = "student";
+        next();
+      } else if (role_name === "student" || role_name === "instructor") {
+        next();
+      } else {
+        next();
+      }
+    } else {
+      req.body.role_name = "student";
+      next();
+    }
+  } catch (err) {
+    next(err);
+  }
+
   /*
     If the role_name in the body is valid, set req.role_name to be the trimmed string and proceed.
 
@@ -62,11 +100,11 @@ const validateRoleName = (req, res, next) => {
       "message": "Role name can not be longer than 32 chars"
     }
   */
-}
+};
 
 module.exports = {
   restricted,
   checkUsernameExists,
   validateRoleName,
   only,
-}
+};
